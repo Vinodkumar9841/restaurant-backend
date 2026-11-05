@@ -1,15 +1,7 @@
 package com.restaurant.restaurant_backend.model;
 
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "table_sessions")
@@ -24,6 +16,13 @@ public class TableSession {
 
     @Column(name = "customer_name")
     private String customerName;
+
+    // DINE_IN or TAKEAWAY
+    @Column(name = "order_type")
+    private String orderType = "DINE_IN";
+
+    @Column(name = "customer_phone")
+    private String customerPhone;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -40,6 +39,12 @@ public class TableSession {
 
     public String getCustomerName() { return customerName; }
     public void setCustomerName(String customerName) { this.customerName = customerName; }
+
+    public String getOrderType() { return orderType; }
+    public void setOrderType(String orderType) { this.orderType = orderType; }
+
+    public String getCustomerPhone() { return customerPhone; }
+    public void setCustomerPhone(String customerPhone) { this.customerPhone = customerPhone; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }

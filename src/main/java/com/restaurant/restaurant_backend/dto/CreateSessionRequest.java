@@ -4,6 +4,8 @@ public class CreateSessionRequest {
     private Integer tableNumber;
     private String customerName;
     private Long restaurantId;
+    private String orderType;
+    private String customerPhone;
 
     public Integer getTableNumber() { return tableNumber; }
     public void setTableNumber(Integer tableNumber) { this.tableNumber = tableNumber; }
@@ -13,4 +15,10 @@ public class CreateSessionRequest {
 
     public Long getRestaurantId() { return restaurantId; }
     public void setRestaurantId(Long restaurantId) { this.restaurantId = restaurantId; }
+
+    public String getOrderType() { return orderType; }
+    public void setOrderType(String orderType) { this.orderType = orderType; }
+
+    public String getCustomerPhone() { return customerPhone; }
+    public void setCustomerPhone(String customerPhone) { this.customerPhone = customerPhone; }
 }
