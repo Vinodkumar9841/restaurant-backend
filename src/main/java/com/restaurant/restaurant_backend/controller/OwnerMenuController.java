@@ -56,6 +56,8 @@ public class OwnerMenuController {
         item.setPrice(request.getPrice());
         item.setCategory(request.getCategory());
         item.setAvailable(request.getAvailable() != null ? request.getAvailable() : true);
+        item.setImageUrl(request.getImageUrl());
+        item.setIsVeg(request.getIsVeg());
         item.setRestaurant(restaurant);
 
         return menuItemRepository.save(item);
@@ -75,6 +77,8 @@ public class OwnerMenuController {
         if (request.getPrice() != null) item.setPrice(request.getPrice());
         if (request.getCategory() != null) item.setCategory(request.getCategory());
         if (request.getAvailable() != null) item.setAvailable(request.getAvailable());
+        if (request.getImageUrl() != null) item.setImageUrl(request.getImageUrl().trim().isEmpty() ? null : request.getImageUrl().trim());
+        if (request.getIsVeg() != null) item.setIsVeg(request.getIsVeg());
 
         return menuItemRepository.save(item);
     }

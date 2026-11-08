@@ -2,6 +2,7 @@ package com.restaurant.restaurant_backend.model;
 
 import java.math.BigDecimal;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -23,6 +24,14 @@ public class MenuItem {
     private String category;
     private Boolean available;
 
+    // Link to a dish photo (optional)
+    @Column(name = "image_url", length = 1000)
+    private String imageUrl;
+
+    // true = vegetarian (green dot), false = non-veg (red dot), null = not set
+    @Column(name = "is_veg")
+    private Boolean isVeg;
+
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
@@ -41,6 +50,12 @@ public class MenuItem {
 
     public Boolean getAvailable() { return available; }
     public void setAvailable(Boolean available) { this.available = available; }
+
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+
+    public Boolean getIsVeg() { return isVeg; }
+    public void setIsVeg(Boolean isVeg) { this.isVeg = isVeg; }
 
     public Restaurant getRestaurant() { return restaurant; }
     public void setRestaurant(Restaurant restaurant) { this.restaurant = restaurant; }
