@@ -1,5 +1,6 @@
 package com.restaurant.restaurant_backend.controller;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -32,8 +33,17 @@ public class TableStatusController {
         this.tableRepository = tableRepository;
     }
 
+    // A table that nobody has picked in a while is treated as free again:
+    //  - picked but no order yet: held for 30 minutes
+    //  - guest has ordered: held for 90 minutes after the last activity
+    private static final long HOLD_MINUTES = 30;
+    private static final long IDLE_MINUTES = 90;
+
     private boolean isTaken(RestaurantTable t) {
-        return Boolean.TRUE.equals(t.getIsOccupied());
+        if (!Boolean.TRUE.equals(t.getIsOccupied())) return false;
+        if (t.getLastActivity() == null) return false;
+        long limit = Boolean.TRUE.equals(t.getOrderConfirmed()) ? IDLE_MINUTES : HOLD_MINUTES;
+        return t.getLastActivity().plusMinutes(limit).isAfter(LocalDateTime.now());
     }
 
     private List<RestaurantTable> tablesOf(Long restaurantId) {
@@ -82,6 +92,28 @@ public class TableStatusController {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(body);
         }
         table.setIsOccupied(true);
+        table.setLastActivity(LocalDateTime.now());
+        table.setOrderConfirmed(false);
+        tableRepository.save(table);
+        body.put("message", "ok");
+        return ResponseEntity.ok(body);
+    }
+
+    // The guest taps "I'm done": the table becomes free right away
+    @PostMapping("/api/public/restaurants/{restaurantId}/tables/{tableNumber}/release")
+    public ResponseEntity<Map<String, Object>> release(@PathVariable Long restaurantId,
+                                                       @PathVariable Integer tableNumber) {
+        Map<String, Object> body = new HashMap<>();
+        RestaurantTable table = tablesOf(restaurantId).stream()
+                .filter(t -> tableNumber.equals(t.getTableNumber()))
+                .findFirst()
+                .orElse(null);
+        if (table == null) {
+            body.put("message", "Table not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(body);
+        }
+        table.setIsOccupied(false);
+        table.setOrderConfirmed(false);
         tableRepository.save(table);
         body.put("message", "ok");
         return ResponseEntity.ok(body);
@@ -97,6 +129,8 @@ public class TableStatusController {
             throw new RuntimeException("You do not have permission to change this table");
         }
         table.setIsOccupied(Boolean.parseBoolean(String.valueOf(body.get("occupied"))));
+        table.setLastActivity(LocalDateTime.now());
+        table.setOrderConfirmed(true);
         tableRepository.save(table);
 
         Map<String, Object> result = new HashMap<>();

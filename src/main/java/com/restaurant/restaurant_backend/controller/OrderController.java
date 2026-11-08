@@ -30,6 +30,7 @@ import com.restaurant.restaurant_backend.repository.MenuItemRepository;
 import com.restaurant.restaurant_backend.repository.OrderItemRepository;
 import com.restaurant.restaurant_backend.repository.OrderRepository;
 import com.restaurant.restaurant_backend.repository.PaymentRepository;
+import com.restaurant.restaurant_backend.repository.RestaurantTableRepository;
 import com.restaurant.restaurant_backend.repository.TableSessionRepository;
 import com.restaurant.restaurant_backend.service.ChefAssignmentService;
 
@@ -45,6 +46,7 @@ public class OrderController {
     private final PaymentRepository paymentRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final ChefAssignmentService chefAssignmentService;
+    private final RestaurantTableRepository tableRepository;
 
     public OrderController(OrderRepository orderRepository,
                             OrderItemRepository orderItemRepository,
@@ -52,7 +54,8 @@ public class OrderController {
                             TableSessionRepository tableSessionRepository,
                             PaymentRepository paymentRepository,
                             SimpMessagingTemplate messagingTemplate,
-                            ChefAssignmentService chefAssignmentService) {
+                            ChefAssignmentService chefAssignmentService,
+                            RestaurantTableRepository tableRepository) {
         this.orderRepository = orderRepository;
         this.orderItemRepository = orderItemRepository;
         this.menuItemRepository = menuItemRepository;
@@ -60,6 +63,7 @@ public class OrderController {
         this.paymentRepository = paymentRepository;
         this.messagingTemplate = messagingTemplate;
         this.chefAssignmentService = chefAssignmentService;
+        this.tableRepository = tableRepository;
     }
 
     @PostMapping
@@ -108,6 +112,21 @@ public class OrderController {
 
         savedOrder.setTotalAmount(total);
         Order finalOrder = orderRepository.save(savedOrder);
+
+        // A dine-in order confirms the guest's table and keeps it reserved a while longer
+        if (!"TAKEAWAY".equals(session.getOrderType()) && session.getTableNumber() != null) {
+            Long rid = session.getRestaurant().getId();
+            tableRepository.findAll().stream()
+                    .filter(t -> t.getRestaurant() != null && rid.equals(t.getRestaurant().getId())
+                            && session.getTableNumber().equals(t.getTableNumber()))
+                    .findFirst()
+                    .ifPresent(t -> {
+                        t.setIsOccupied(true);
+                        t.setOrderConfirmed(true);
+                        t.setLastActivity(LocalDateTime.now());
+                        tableRepository.save(t);
+                    });
+        }
 
         // Push to any kitchen dashboard listening for this restaurant
         messagingTemplate.convertAndSend(
