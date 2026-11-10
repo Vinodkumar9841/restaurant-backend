@@ -74,7 +74,9 @@ public class OwnerBillController {
         result.put("orderType", order.getTableSession() != null ? order.getTableSession().getOrderType() : null);
         result.put("tableNumber", order.getTableSession() != null ? order.getTableSession().getTableNumber() : null);
         result.put("tokenNumber", order.getTokenNumber());
-        result.put("paymentMethod", "PAID".equals(payStatus) ? "Online" : "Cash");
+        String mode = order.getPaymentMode();
+        String method = "UPI".equals(mode) ? "UPI" : ("PAID".equals(payStatus) ? "Online" : "Cash");
+        result.put("paymentMethod", method);
         result.put("items", lines);
         result.put("taxableValue", taxable);
         result.put("cgst", cgst);

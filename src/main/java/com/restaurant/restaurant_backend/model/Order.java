@@ -48,6 +48,10 @@ public class Order {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    // How the guest chose to pay: CASH, UPI or ONLINE
+    @Column(name = "payment_mode")
+    private String paymentMode;
+
     // Pickup number for takeaway orders (1, 2, 3... restarting each day); empty for dine-in
     @Column(name = "token_number")
     private Integer tokenNumber;
@@ -75,6 +79,9 @@ public class Order {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public String getPaymentMode() { return paymentMode; }
+    public void setPaymentMode(String paymentMode) { this.paymentMode = paymentMode; }
 
     public Integer getTokenNumber() { return tokenNumber; }
     public void setTokenNumber(Integer tokenNumber) { this.tokenNumber = tokenNumber; }

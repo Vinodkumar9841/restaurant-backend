@@ -86,6 +86,7 @@ public class OrderController {
         // Smart assignment: the least-busy online chef gets the whole order (null = everyone busy/offline)
         order.setAssignedChef(chefAssignmentService.pickChef(session.getRestaurant().getId()));
         order.setStatus("PENDING");
+        order.setPaymentMode(request.getPaymentMode());
         order.setCreatedAt(LocalDateTime.now());
         if ("TAKEAWAY".equals(session.getOrderType())) {
             order.setTokenNumber(nextToken(session.getRestaurant().getId()));
