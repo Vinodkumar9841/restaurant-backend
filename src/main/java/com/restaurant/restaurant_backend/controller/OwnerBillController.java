@@ -75,7 +75,15 @@ public class OwnerBillController {
         result.put("tableNumber", order.getTableSession() != null ? order.getTableSession().getTableNumber() : null);
         result.put("tokenNumber", order.getTokenNumber());
         String mode = order.getPaymentMode();
-        String method = "UPI".equals(mode) ? "UPI" : ("PAID".equals(payStatus) ? "Online" : "Cash");
+        String method;
+        if ("PAY_LATER".equals(mode)) {
+            var sess = order.getTableSession();
+            method = (sess != null && Boolean.TRUE.equals(sess.getSettled()) && sess.getSettledMethod() != null)
+                    ? (sess.getSettledMethod().equals("UPI") ? "UPI" : "Cash")
+                    : "Pay after meal (not settled yet)";
+        } else {
+            method = "UPI".equals(mode) ? "UPI" : ("PAID".equals(payStatus) ? "Online" : "Cash");
+        }
         result.put("paymentMethod", method);
         result.put("items", lines);
         result.put("taxableValue", taxable);

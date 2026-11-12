@@ -27,6 +27,22 @@ public class TableSession {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    // Table tab: the guest asked for the bill / the owner has taken payment
+    @Column(name = "bill_requested")
+    private Boolean billRequested = false;
+
+    @Column(name = "bill_requested_at")
+    private LocalDateTime billRequestedAt;
+
+    @Column(name = "settled")
+    private Boolean settled = false;
+
+    @Column(name = "settled_method")
+    private String settledMethod;
+
+    @Column(name = "settled_at")
+    private LocalDateTime settledAt;
+
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
@@ -48,6 +64,21 @@ public class TableSession {
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
+
+    public Boolean getBillRequested() { return billRequested; }
+    public void setBillRequested(Boolean billRequested) { this.billRequested = billRequested; }
+
+    public LocalDateTime getBillRequestedAt() { return billRequestedAt; }
+    public void setBillRequestedAt(LocalDateTime billRequestedAt) { this.billRequestedAt = billRequestedAt; }
+
+    public Boolean getSettled() { return settled; }
+    public void setSettled(Boolean settled) { this.settled = settled; }
+
+    public String getSettledMethod() { return settledMethod; }
+    public void setSettledMethod(String settledMethod) { this.settledMethod = settledMethod; }
+
+    public LocalDateTime getSettledAt() { return settledAt; }
+    public void setSettledAt(LocalDateTime settledAt) { this.settledAt = settledAt; }
 
     public Restaurant getRestaurant() { return restaurant; }
     public void setRestaurant(Restaurant restaurant) { this.restaurant = restaurant; }
