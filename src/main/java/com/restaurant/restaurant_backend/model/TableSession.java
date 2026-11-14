@@ -34,6 +34,13 @@ public class TableSession {
     @Column(name = "bill_requested_at")
     private LocalDateTime billRequestedAt;
 
+    // "Call waiter": the guest asked for help, the owner has not cleared it yet
+    @Column(name = "waiter_called")
+    private Boolean waiterCalled = false;
+
+    @Column(name = "waiter_called_at")
+    private LocalDateTime waiterCalledAt;
+
     @Column(name = "settled")
     private Boolean settled = false;
 
@@ -70,6 +77,12 @@ public class TableSession {
 
     public LocalDateTime getBillRequestedAt() { return billRequestedAt; }
     public void setBillRequestedAt(LocalDateTime billRequestedAt) { this.billRequestedAt = billRequestedAt; }
+
+    public Boolean getWaiterCalled() { return waiterCalled; }
+    public void setWaiterCalled(Boolean waiterCalled) { this.waiterCalled = waiterCalled; }
+
+    public LocalDateTime getWaiterCalledAt() { return waiterCalledAt; }
+    public void setWaiterCalledAt(LocalDateTime waiterCalledAt) { this.waiterCalledAt = waiterCalledAt; }
 
     public Boolean getSettled() { return settled; }
     public void setSettled(Boolean settled) { this.settled = settled; }
