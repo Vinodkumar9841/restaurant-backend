@@ -50,9 +50,23 @@ public class TableSession {
     @Column(name = "settled_at")
     private LocalDateTime settledAt;
 
+    // Secret key the guest's phone must send with every guest link
+    @Column(name = "access_key")
+    private String accessKey;
+
     @ManyToOne
     @JoinColumn(name = "restaurant_id")
     private Restaurant restaurant;
+
+    public String getAccessKey() { return accessKey; }
+    public void setAccessKey(String accessKey) { this.accessKey = accessKey; }
+
+    public boolean keyMatches(String key) {
+        if (accessKey == null || key == null) return false;
+        return java.security.MessageDigest.isEqual(
+                accessKey.getBytes(java.nio.charset.StandardCharsets.UTF_8),
+                key.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

@@ -37,6 +37,7 @@ public class SessionController {
         session.setCustomerPhone(request.getCustomerPhone());
         session.setCreatedAt(LocalDateTime.now());
         session.setRestaurant(restaurant);
+        session.setAccessKey(java.util.UUID.randomUUID().toString().replace("-", ""));
         return tableSessionRepository.save(session);
     }
 }

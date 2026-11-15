@@ -12,6 +12,9 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.restaurant.restaurant_backend.model.TableSession;
@@ -29,9 +32,10 @@ public class WaiterController {
     }
 
     @PostMapping("/api/public/sessions/{sessionId}/call-waiter")
-    public Map<String, Object> callWaiter(@PathVariable Long sessionId) {
+    public Map<String, Object> callWaiter(@PathVariable Long sessionId, @RequestParam(required = false) String key) {
         TableSession session = sessionRepository.findById(sessionId)
-                .orElseThrow(() -> new RuntimeException("Session not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied"));
+        if (!session.keyMatches(key)) throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Access denied");
         if (!Boolean.TRUE.equals(session.getWaiterCalled())) {
             session.setWaiterCalled(true);
             session.setWaiterCalledAt(LocalDateTime.now());
